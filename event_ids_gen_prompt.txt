@@ -1,0 +1,19 @@
+Generates the constant declarations from the information below. After each comment, add an inline comment with a consise summary of the description
+
+Mapping example (notes that the comments are just example of consise description summary):
+1.
+EVENT_AIA_START / EVENT_AIA_END
+0xA000-0xAFFF
+
+actually declares two constant and is declared like
+EVENT_AIA_START = 0xA000  #: Starts of the range for accessibility WinEvent
+EVENT_AIA_END = 0xAFFF  #: Ends of the range for accessibility WinEvent
+
+2.
+EVENT_OBJECT_ACCELERATORCHANGE
+0x8012
+
+is a single constant declared as:
+EVENT_OBJECT_ACCELERATORCHANGE=0x8012  #: Object's KeyboardShortcut property changed
+
+The list of event id description to map:

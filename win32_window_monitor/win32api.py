@@ -1,11 +1,9 @@
 import ctypes
 from ctypes import wintypes
-# using pywin32 for constants and ctypes for everything else seems a little
-# indecisive, but whatevs.
-import win32con
-
 import logging
 from typing import Optional
+from .event_ids import HookEvent
+from typing import Union
 
 user32 = ctypes.windll.user32
 ole32 = ctypes.windll.ole32
@@ -24,12 +22,18 @@ WinEventProcType = ctypes.WINFUNCTYPE(
 
 HWINEVENTHOOK = wintypes.HANDLE
 
-# limited information would be sufficient, but our platform doesn't have it.
-PROCESS_FLAG = getattr(win32con, 'PROCESS_QUERY_LIMITED_INFORMATION',
-                       win32con.PROCESS_QUERY_INFORMATION)
+# Relevant Windows SDK constant
 
-THREAD_FLAG = getattr(win32con, 'THREAD_QUERY_LIMITED_INFORMATION',
-                      win32con.THREAD_QUERY_INFORMATION)
+THREAD_QUERY_LIMITED_INFORMATION = 2048
+PROCESS_QUERY_LIMITED_INFORMATION = 4096
+WINEVENT_OUTOFCONTEXT = 0
+WINEVENT_SKIPOWNTHREAD = 1
+WINEVENT_SKIPOWNPROCESS = 2
+WINEVENT_INCONTEXT = 4
+
+# Could fallback on PROCESS_QUERY_INFORMATION and THREAD_QUERY_INFORMATION for xP
+PROCESS_FLAG = PROCESS_QUERY_LIMITED_INFORMATION
+THREAD_FLAG = THREAD_QUERY_LIMITED_INFORMATION
 
 
 def get_process_filename(process_id: int, log_error=True) -> Optional[str]:
@@ -114,7 +118,7 @@ SetWinEventHook.argtypes = [
 SetWinEventHook.restype = HWINEVENTHOOK
 
 
-def set_win_event_hook(win_event_proc: WinEventProcType, event_type: int) -> HWINEVENTHOOK:
+def set_win_event_hook(win_event_proc: WinEventProcType, event_type: Union[int, HookEvent]) -> HWINEVENTHOOK:
     """Set a global event hook for the given event_type.
 
     Throws an OSError exception on failure created by ctypes.WinError().
@@ -124,15 +128,17 @@ def set_win_event_hook(win_event_proc: WinEventProcType, event_type: int) -> HWI
     :return: registered event hook handle.
     """
     win_event_hook_handle = SetWinEventHook(
-        event_type, event_type, 0, win_event_proc, 0, 0, win32con.WINEVENT_OUTOFCONTEXT)
+        event_type, int(event_type), 0, win_event_proc, 0, 0, WINEVENT_OUTOFCONTEXT)
     if not win_event_hook_handle:
         raise ctypes.WinError()
     return win_event_hook_handle
 
 
+UnhookWinEvent = user32.UnhookWinEvent
+UnhookWinEvent.argtypes = [HWINEVENTHOOK]
+UnhookWinEvent.restype = wintypes.BOOL
+
+
 def unhook_win_event(win_event_hook_handle: HWINEVENTHOOK) -> bool:
     """Removes the hook set by set_win_event_hook()."""
-    UnhookWinEvent = user32.UnhookWinEvent
-    UnhookWinEvent.argtypes = [HWINEVENTHOOK]
-    UnhookWinEvent.restype = wintypes.BOOL
     return UnhookWinEvent(win_event_hook_handle) != 0

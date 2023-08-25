@@ -25,30 +25,29 @@ import ctypes.wintypes
 # The types of events we want to listen for, and the names we'll use for
 # them in the log output. Pick from
 # http://msdn.microsoft.com/en-us/library/windows/desktop/dd318066(v=vs.85).aspx
-eventTypes = {
-    win32con.EVENT_SYSTEM_FOREGROUND: "Foreground",
-    win32con.EVENT_OBJECT_FOCUS: "Focus",
-    win32con.EVENT_OBJECT_SHOW: "Show",
-    win32con.EVENT_SYSTEM_DIALOGSTART: "Dialog",
-    win32con.EVENT_SYSTEM_CAPTURESTART: "Capture",
-    win32con.EVENT_SYSTEM_MINIMIZEEND: "UnMinimize"
+EVENT_TYPES = {
+    HookEvent.SYSTEM_FOREGROUND: "Foreground",
+    HookEvent.OBJECT_FOCUS: "Focus",
+    HookEvent.OBJECT_SHOW: "Show",
+    HookEvent.SYSTEM_DIALOGSTART: "Dialog",
+    HookEvent.SYSTEM_CAPTURESTART: "Capture",
+    HookEvent.SYSTEM_MINIMIZEEND: "UnMinimize"
 }
 
 # store last event time for displaying time between events
-lastTime = 0
+last_time = 0
 
 
 def log(msg):
     print(msg)
 
 
-def logError(msg):
-    sys.stdout.write(msg + '\n')
-
-
-def callback(win_event_hook_handle, event_id: int, hwnd, id_object, id_child, event_thread_id,
-             event_time_ms):
-    global lastTime
+def win_event_hook_callback(win_event_hook_handle, event_id: int, hwnd: wintypes.HWND,
+                            id_object: wintypes.LONG, id_child: wintypes.LONG,
+                            event_thread_id: wintypes.DWORD,
+                            event_time_ms: wintypes.DWORD):
+    global last_time
+    event_id = HookEvent(event_id)
     title = get_window_title(hwnd)
 
     process_id = get_hwnd_process_id(event_thread_id, hwnd)
@@ -64,22 +63,23 @@ def callback(win_event_hook_handle, event_id: int, hwnd, id_object, id_child, ev
     elif id_object == win32con.OBJID_CURSOR:
         hwnd = '<Cursor>'
 
+    elapsed_ms = event_time_ms - last_time if last_time else 0
     log(u"%s:%04.2f\t%-10s\t"
         u"W:%-8s\tP:%-8d\tT:%-8d\t"
         u"%s\t%s" % (
-            event_time_ms, float(event_time_ms - lastTime) / 1000, eventTypes.get(event_id, hex(event_id)),
-            hwnd, process_id or -1, event_thread_id or -1,
-            short_name, title))
+        event_time_ms, float(elapsed_ms) / 1000, EVENT_TYPES.get(event_id, hex(event_id)),
+        hwnd, process_id or -1, event_thread_id or -1,
+        short_name, title))
 
-    lastTime = event_time_ms
+    last_time = event_time_ms
 
 
 def main():
     ole32.CoInitialize(0)
 
-    win_event_proc = WinEventProcType(callback)
+    win_event_proc = WinEventProcType(win_event_hook_callback)
 
-    event_hook_handles = [set_win_event_hook(win_event_proc, et) for et in eventTypes.keys()]
+    event_hook_handles = [set_win_event_hook(win_event_proc, et) for et in EVENT_TYPES.keys()]
 
     msg = ctypes.wintypes.MSG()
     while user32.GetMessageW(ctypes.byref(msg), 0, 0, 0) != 0:
