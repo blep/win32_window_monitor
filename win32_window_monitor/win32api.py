@@ -4,6 +4,7 @@ import logging
 from typing import Optional
 from .event_ids import HookEvent
 from typing import Union
+import contextlib
 
 user32 = ctypes.windll.user32
 ole32 = ctypes.windll.ole32
@@ -142,3 +143,32 @@ UnhookWinEvent.restype = wintypes.BOOL
 def unhook_win_event(win_event_hook_handle: HWINEVENTHOOK) -> bool:
     """Removes the hook set by set_win_event_hook()."""
     return UnhookWinEvent(win_event_hook_handle) != 0
+
+
+@contextlib.contextmanager
+def init_com():
+    ole32.CoInitialize(0)
+    try:
+        yield
+    finally:
+        ole32.CoUninitialize()
+
+
+def run_message_loop():
+    """
+    Runs WIN32 message loop (user32.GetMessageW) until WM_QUIT is received.
+    :return:
+    """
+    msg = ctypes.wintypes.MSG()
+    while user32.GetMessageW(ctypes.byref(msg), 0, 0, 0) != 0:
+        user32.TranslateMessageW(msg)
+        user32.DispatchMessageW(msg)
+
+
+PostQuitMessage = user32.PostQuitMessage
+PostQuitMessage.argtypes = [ctypes.c_int]
+PostQuitMessage.restype = None
+
+
+def post_quit_message(exit_code: int = 0):
+    PostQuitMessage(exit_code)
