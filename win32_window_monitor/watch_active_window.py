@@ -13,11 +13,6 @@ http://stackoverflow.com/a/15898768/9585
 """
 
 from win32_window_monitor.win32api import *
-
-# using pywin32 for constants and ctypes for everything else seems a little
-# indecisive, but whatevs.
-import win32con
-
 import signal
 import platform
 
@@ -56,7 +51,7 @@ class WindowEventLogger:
 
         if hwnd:
             hwnd = hex(hwnd)
-        elif id_object == win32con.OBJID_CURSOR:
+        elif id_object == ObjectId.CURSOR:
             hwnd = '<Cursor>'
 
         elapsed_second = float(event_time_ms - self.last_time if self.last_time else 0) / 1000
@@ -89,6 +84,9 @@ def main():
             signal.signal(signal.SIGBREAK, signal_handler)
         signal.signal(signal.SIGINT, signal_handler)
 
+        # Run Windows message loop until WM_QUIT message is received (send by signal handlers above).
+        # If you have a graphic UI, it is likely that your application already has a Windows message
+        # loop that should be used instead.
         run_message_loop()
 
         for hook_handle in event_hook_handles:

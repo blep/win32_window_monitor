@@ -1,5 +1,9 @@
 import pytest
-from win32_window_monitor.event_ids import HookEvent
+from win32_window_monitor.ids import HookEvent, ObjectId
+
+
+# HookEvent and indirectly test NamedInt
+# ###################################################################
 
 
 def test_event_constant_is_event_type():
@@ -80,3 +84,29 @@ def test_event_cmp():
 
 def test_event_hashable():
     assert hash(HookEvent.AIA_START) == hash(HookEvent.AIA_START.value)
+
+
+# ObjectId
+# ###################################################################
+
+def test_objid_repr():
+    assert repr(ObjectId.CURSOR) == 'ObjectId.CURSOR'
+    assert repr(ObjectId(0x1234)) == 'ObjectId(0x1234)'
+
+
+def test_objid_str():
+    assert str(ObjectId.CURSOR) == 'CURSOR'
+    assert str(ObjectId(0x1234)) == '0x1234'
+
+
+def test_convert_int_to_named_objid():
+    assert type(ObjectId(0xFFFFFFF7)) == ObjectId
+    assert ObjectId(0xFFFFFFF7) == ObjectId.CURSOR
+
+
+def test_objid_eq():
+    assert ObjectId.CURSOR == ObjectId.CURSOR
+    assert ObjectId.CURSOR != ObjectId.WINDOW
+    assert ObjectId.CURSOR == ObjectId(0xFFFFFFF7)
+    assert ObjectId.CURSOR == 0xFFFFFFF7
+    assert 0xFFFFFFF7 == ObjectId.CURSOR

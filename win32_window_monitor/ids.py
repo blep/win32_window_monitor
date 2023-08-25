@@ -76,9 +76,9 @@ class HookEvent(NamedInt):
     Names are identical to Windows SDK, with EVENT_ prefix stripped.
 
     See https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants for a detailed
-    and accurate description of each events.
+    and accurate description of each event.
 
-    Extends int to allow wrapping of any event id, event if it is missing in the constant declared below.
+    Extends int to allow wrapping of any event id: HookEvent(0x1234), even if it is missing in the constant declared below.
     """
 
     # Lowest possible event id.
@@ -293,3 +293,29 @@ class HookEvent(NamedInt):
     UIA_PROPID_START = 0x7500
     # End of range reserved for UI Automation property-changed event identifiers.
     UIA_PROPID_END = 0x75FF
+
+
+class ObjectId(NamedInt):
+    """Object ids constants for set_event_hook() callback id_object parameter.
+    Names are identical to Windows SDK, with OBJID_ prefix stripped.
+
+    See https://learn.microsoft.com/en-us/windows/win32/winauto/object-identifiers for a detailed
+    and accurate description of each events.
+
+    Extends int to allow wrapping of any event id: ObjectId(0x1234),
+    even if it is missing in the constant declared below.
+    """
+    ALERT = 0xFFFFFFF6  #: An alert associated with a window or an application.
+    CARET = 0xFFFFFFF8  #: The text insertion bar (caret) in the window.
+    CLIENT = 0xFFFFFFFC  #: The window's client area.
+    CURSOR = 0xFFFFFFF7  #: The mouse pointer.
+    HSCROLL = 0xFFFFFFFA  #: The window's horizontal scroll bar.
+    NATIVEOM = 0xFFFFFFF0  #: Third-party applications expose their object model.
+    MENU = 0xFFFFFFFD  #: The window's menu bar.
+    QUERYCLASSNAMEIDX = 0xFFFFFFF4  #: Oleacc.dll uses this internally.
+    SIZEGRIP = 0xFFFFFFF9  #: The window's size grip.
+    SOUND = 0xFFFFFFF5  #: A sound object.
+    SYSMENU = 0xFFFFFFFF  #: The window's system menu.
+    TITLEBAR = 0xFFFFFFFE  #: The window's title bar.
+    VSCROLL = 0xFFFFFFFB  #: The window's vertical scroll bar.
+    WINDOW = 0x00000000  #: The window itself.

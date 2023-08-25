@@ -2,7 +2,7 @@ import ctypes
 from ctypes import wintypes
 import logging
 from typing import Optional
-from .event_ids import HookEvent
+from .ids import HookEvent, ObjectId
 from typing import Union
 import contextlib
 
@@ -56,7 +56,7 @@ def get_process_filename(process_id: int, log_error=True) -> Optional[str]:
         kernel32.CloseHandle(handle_process)
 
 
-def get_hwnd_process_id(event_thread_id: int, hwnd: wintypes.HWND, log_error=True) -> Optional[int]:
+def get_hwnd_process_id(event_thread_id: wintypes.DWORD, hwnd: wintypes.HWND, log_error=True) -> Optional[int]:
     """Returns the processId of the given window handle in the given thread, or None on error."""
     if not hwnd and not event_thread_id:
         return None
@@ -123,6 +123,8 @@ def set_win_event_hook(win_event_proc: WinEventProcType, event_type: Union[int, 
     """Set a global event hook for the given event_type.
 
     Throws an OSError exception on failure created by ctypes.WinError().
+
+    See https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook for detail.
 
     :param win_event_proc: callback called when an event occurs.
     :param event_type: event id to hook. See https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants
