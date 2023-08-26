@@ -22,7 +22,7 @@ license={ file = "LICENSE" }
 keywords=["windows", "focus", "process", "SetWinEventHook", "EVENT_SYSTEM_FOREGROUND", "ctypes"]
 # version is retrieved from package symbol __version__
 dynamic = ["version"]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
 ]
 

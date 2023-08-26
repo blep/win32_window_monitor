@@ -19,8 +19,7 @@ jobs:
         os:
           - windows-latest
         python-version:
-          - '3.8'
-#          - '3.9'
+          - '3.9'
 #          - '3.10'
 #          - '3.11'
         continue-on-error:
