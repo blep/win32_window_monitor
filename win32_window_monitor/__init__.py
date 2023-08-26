@@ -1,3 +1,5 @@
+__version__ = "0.1.0"
+
 from win32_window_monitor.ids import HookEvent, ObjectId
 from win32_window_monitor.win32api import (
     WinEventProcType,

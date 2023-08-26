@@ -1,0 +1,49 @@
+---
+name: CI
+on:
+  # Trigger on pushes to the main branch only.
+  push:
+     branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  # Or run manually.
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+        python-version:
+          - '3.8'
+#          - '3.9'
+#          - '3.10'
+#          - '3.11'
+        continue-on-error:
+          - false
+    runs-on: "${{ matrix.os }}"
+    continue-on-error: "${{ matrix.continue-on-error }}"
+    steps:
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "This job is now running on a ${{ runner.os }} server."
+      - run: echo "The branch name is ${{ github.ref }} and the repository is ${{ github.repository }}."
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install flit
+          flit install --extras=all
+      - name: run pytest
+        timeout-minutes: 5
+        run: pytest .
+      - name: checks repository for offensive / exclusive terms
+        uses: microsoft/InclusivenessAnalyzer@main
+        with:
+          excludeTerms: master

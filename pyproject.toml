@@ -1,43 +1,57 @@
-[tool.poetry]
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
 name = "win32-window-monitor"
-version = "0.1.0"
-license = "MIT"
-description = "Monitor when the focused window or its title change on Windows. Invokes the callback with windows HWND, pid, and executable path."
-authors = ["Baptiste Lepilleur <baptiste.lepilleur@gmail.com>"]
+authors = [{name = "Baptiste Lepilleur", email = "baptiste.lepilleur@gmail.com"}]
 readme = "README.md"
-# TODO
-#keywords = []
+description = "Monitor/capture title and process of the focused desktop window using SetWinEventHook WIN32 API."
 # See https://pypi.org/classifiers/ for all classifiers
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Environment :: Win32 (MS Windows)",
-    "Intended Audience :: End Users/Desktop",
     "Operating System :: Microsoft :: Windows :: Windows Vista",
     "Operating System :: Microsoft :: Windows :: Windows 10",
 ]
+license={ file = "LICENSE" }
+keywords=["windows", "focus", "process", "SetWinEventHook", "EVENT_SYSTEM_FOREGROUND", "ctypes"]
+# version is retrieved from package symbol __version__
+dynamic = ["version"]
+requires-python = ">=3.8"
+dependencies = [
+]
 
+[project.urls]
+Home = "https://github.com/blep/win32_window_monitor"
+Source = "https://github.com/blep/win32_window_monitor"
+#Documentation = "https://?"
 
-[tool.poetry.dependencies]
-python = "^3.8"
-pywin32="^306"
+[project.scripts]
+log_focused_window = "win32_window_monitor:main"
 
-[tool.poetry.dev-dependencies]
-# Release
-twine = "^4.0.2"
-# Testing
-pytest = "^7.3.2"
-coverage = "^7.3.0"
+[project.optional-dependencies]
+test = [
+    "pytest ~= 7.3.2",
+    "coverage ~= 7.3.0"
+]
+doc = ["sphinx ~= 7.2.3"]
+
+#[tool.poetry.dev-dependencies]
+## Release
+#twine = "^4.0.2"
+#flit = "^3.9.0^"
+## keyring is used by flit to store the password
+#keyring = "^24.2.0"
+## Testing
+##pytest = "^7.3.2"
+##coverage = "^7.3.0"
 
 [tool.pytest.ini_options]
 testpaths = "tests"
 
-[build-system]
-requires = ["poetry-core>=1.1.0"]
-build-backend = "poetry.core.masonry.api"
 
