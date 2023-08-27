@@ -12,4 +12,5 @@ from win32_window_monitor.win32api import (
     init_com,
     run_message_loop,
     post_quit_message,
+    post_quit_message_on_break_signal,
 )

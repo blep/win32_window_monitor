@@ -57,22 +57,13 @@ class WindowEventLogger:
 
 
 def main():
-    with init_com():
+    with init_com(), post_quit_message_on_break_signal():
         # Register hook callback for all relevant event types
         # Demonstrates that we can use a method as event hook callback without issue thanks
         # to ctypes.
         event_logger = WindowEventLogger()
         win_event_proc = WinEventProcType(event_logger.on_event)
         event_hook_handles = [set_win_event_hook(win_event_proc, et) for et in EVENT_TYPES.keys()]
-
-        # Install signal handler to exit the application when CTRL+C or CTRL+Break is pressed
-        def signal_handler(signum, frame):
-            # Send WM_QUIT message to exit the message loop started below
-            post_quit_message(0)
-
-        if platform.system() == 'Windows':
-            signal.signal(signal.SIGBREAK, signal_handler)
-        signal.signal(signal.SIGINT, signal_handler)
 
         # Run Windows message loop until WM_QUIT message is received (send by signal handlers above).
         # If you have a graphic UI, it is likely that your application already has a Windows message

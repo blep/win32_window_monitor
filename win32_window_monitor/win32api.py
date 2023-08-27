@@ -1,10 +1,12 @@
-import ctypes
-from ctypes import wintypes
-import logging
-from typing import Optional
-from .ids import HookEvent, ObjectId
-from typing import Union
 import contextlib
+import ctypes
+import logging
+import signal
+from ctypes import wintypes
+from typing import Optional
+from typing import Union
+
+from .ids import HookEvent
 
 user32 = ctypes.windll.user32
 ole32 = ctypes.windll.ole32
@@ -174,3 +176,27 @@ PostQuitMessage.restype = None
 
 def post_quit_message(exit_code: int = 0):
     PostQuitMessage(exit_code)
+
+
+@contextlib.contextmanager
+def post_quit_message_on_break_signal():
+    """Install signal handler to exit the application when CTRL+C or CTRL+Break is pressed.
+
+    Exiting the application is done by sending the WM_QUIT message (via post_quit_message),
+    which causes the Windows message loop of run_message_loop() that receives it to exit.
+
+    This is a contextmanager for use with the with statement.
+    """
+    def signal_handler_post_quit_message(signum, stack_frame):
+        post_quit_message()
+
+    old_break_handler = signal.getsignal(signal.SIGBREAK)
+    signal.signal(signal.SIGBREAK, signal_handler_post_quit_message)
+    old_int_handler = signal.getsignal(signal.SIGINT)
+    signal.signal(signal.SIGINT, signal_handler_post_quit_message)
+
+    yield
+
+    # Restore the old signal handlers on exit
+    signal.signal(signal.SIGINT, old_int_handler)
+    signal.signal(signal.SIGBREAK, old_break_handler)
