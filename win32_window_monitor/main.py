@@ -3,8 +3,6 @@
 
 from win32_window_monitor import *
 from ctypes import wintypes
-import signal
-import platform
 
 # The types of events we want to listen for, and the names we'll use for
 # them in the log output. Pick from
