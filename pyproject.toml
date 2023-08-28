@@ -37,9 +37,13 @@ log_focused_window = "win32_window_monitor:main"
 [project.optional-dependencies]
 test = [
     "pytest ~= 7.3.2",
-    "coverage ~= 7.3.0"
+    "coverage ~= 7.3.0",
 ]
-doc = ["sphinx ~= 7.2.3"]
+doc = [
+    "sphinx ~= 7.2.3",
+    "sphinx-rtd-theme ~= 1.3.0",
+    "myst-parser ~= 2.0.0",
+]
 
 #[tool.poetry.dev-dependencies]
 ## Release

@@ -47,7 +47,7 @@ Columns content:
 - short process path
 - window title
 
-Action made to produce this event:
+Actions made to produce this event:
 - Bring Firefox window to focus by click on it in the Taskbar. Events with `explorer.exe` are interactions with the Taskbar.
 - Bring Notion app to focus by click on it in the Taskbar.
 - Bring back cmd.exe to focus by click on it in the Taskbar.
