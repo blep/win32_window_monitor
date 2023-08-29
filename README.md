@@ -48,15 +48,16 @@ Columns content:
 - window title
 
 Actions made to produce this event:
-- Bring Firefox window to focus by click on it in the Taskbar. Events with `explorer.exe` are interactions with the Taskbar.
+
+- Bring Firefox window to focus by click on it in the Taskbar. Events with `explorer.exe` are interactions with the
+  Taskbar.
 - Bring Notion app to focus by click on it in the Taskbar.
 - Bring back cmd.exe to focus by click on it in the Taskbar.
 
 # Usage example
 
-IMPORTANT: you need more than just SYSTEM_FOREGROUND to capture all
-events that bring a window to the foreground. SYSTEM_FOREGROUND for
-example is not generated when restoring a minimized window.
+IMPORTANT: to track the current foreground window, you need at least HookEvent.SYSTEM_FOREGROUND and
+HookEvent.SYSTEM_MINIMIZEEND (SYSTEM_FOREGROUND for is not send when restoring a minimized window).
 
 ```python
 from win32_window_monitor import *
@@ -99,9 +100,5 @@ if __name__ == '__main__':
 This project core is heavily based on the work of others:
 
 - Kevin Turner: [GIST](https://gist.github.com/keturn/6695625) providing an excellent starting base for this project.
-- Eric
-  Blade: [getting process name from window handle](https://mail.python.org/pipermail/python-win32/2009-July/009381.html)
-- David
-  Heffernan: [using WIN32 SetWinEventHook with ctypes](https://stackoverflow.com/questions/15849564/how-to-use-winapi-setwineventhook-in-python/15898768#15898768-
-  David
-  Heffernan: [using WIN32 SetWinEventHook with ctypes](https://stackoverflow.com/questions/15849564/how-to-use-winapi-setwineventhook-in-python/15898768#15898768)
+- Eric Blade: [getting process name from window handle](https://mail.python.org/pipermail/python-win32/2009-July/009381.html)
+- David Heffernan: [using WIN32 SetWinEventHook with ctypes](https://stackoverflow.com/questions/15849564/how-to-use-winapi-setwineventhook-in-python/15898768#15898768-
