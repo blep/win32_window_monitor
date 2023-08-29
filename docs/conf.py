@@ -1,4 +1,7 @@
 import sphinx_rtd_theme
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -21,8 +24,15 @@ extensions = [
     "myst_parser",
 ]
 
+# TODO check the napoleon extension which allow more compact/readable docstring:
+# https://sphinxcontrib-napoleon.readthedocs.io/en/latest/
+
+
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+# ensure that __all__ is not ignored
+autosummary_imported_members = True
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

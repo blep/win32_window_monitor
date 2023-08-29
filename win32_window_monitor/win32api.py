@@ -161,7 +161,6 @@ def init_com():
 def run_message_loop():
     """
     Runs WIN32 message loop (user32.GetMessageW) until WM_QUIT is received.
-    :return:
     """
     msg = ctypes.wintypes.MSG()
     while user32.GetMessageW(ctypes.byref(msg), 0, 0, 0) != 0:

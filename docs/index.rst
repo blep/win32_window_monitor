@@ -74,12 +74,7 @@ example is not generated when restoring a minimized window.
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: win32_window_monitor
-   :members:
-
-.. autosummary::
-   :toctree: generated
-
+   api
 
 .. include ../README.md
 
