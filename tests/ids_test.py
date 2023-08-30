@@ -1,5 +1,5 @@
 import pytest
-from win32_window_monitor.ids import HookEvent, ObjectId
+from win32_window_monitor.ids import HookEvent, ObjectId, NamedInt
 
 
 # HookEvent and indirectly test NamedInt
@@ -41,13 +41,19 @@ def test_event_value():
 
 def test_event_repr():
     assert repr(HookEvent.AIA_START) == 'HookEvent.AIA_START'
-    assert repr(HookEvent(0x1234)) == 'HookEvent(0x1234)'
+    assert repr(HookEvent(0x123F)) == 'HookEvent(0x123F)'
+
+    try:
+        NamedInt.FORCE_HEX_REPR = True
+        assert repr(HookEvent.AIA_START) == '0xA000'
+        assert repr(HookEvent(0x1234)) == '0x1234'
+    finally:
+        NamedInt.FORCE_HEX_REPR = False
 
 
 def test_event_str():
     assert str(HookEvent.AIA_START) == 'AIA_START'
     assert str(HookEvent(0x1234)) == '0x1234'
-
 
 def test_convert_int_to_named_event():
     assert type(HookEvent(0xA000)) == HookEvent

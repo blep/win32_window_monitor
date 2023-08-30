@@ -1,6 +1,6 @@
 __version__ = "0.1.0"
 
-from win32_window_monitor.ids import HookEvent, ObjectId
+from win32_window_monitor.ids import HookEvent, ObjectId, NamedInt
 from win32_window_monitor.win32api import (
     WinEventProcType,
     HWINEVENTHOOK,
@@ -19,6 +19,7 @@ __all__ = [
     # ids
     'HookEvent',
     'ObjectId',
+    'NamedInt',
     # win32api
     'WinEventProcType',
     'HWINEVENTHOOK',

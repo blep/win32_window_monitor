@@ -1,6 +1,8 @@
 """
-Events constant for use with set_win_event_hook().
+Events constant for use with set_win_event_hook() and its callback.
 """
+
+import os
 
 
 class NamedInt(int):
@@ -11,6 +13,9 @@ class NamedInt(int):
     See https://docs.python.org/3/reference/datamodel.html#customizing-class-creation for an
     example of the logic used to convert integer constant to actual instance of the class.
     """
+    # Force str to output only the hex value. For documentation generation, so that enum are documented as:
+    # `SYSTEM_FOREGROUND = 0x0003` instead of `SYSTEM_FOREGROUND = HookEvent.SYSTEM_FOREGROUND`
+    FORCE_HEX_REPR = bool(os.environ.get('SPHINX_NAMED_INT_FORCE_HEX_REPR', False))
 
     _value2member_map_ = None
 
@@ -52,10 +57,12 @@ class NamedInt(int):
 
     def __repr__(self):
         class_name = self.__class__.__name__
-        if self._name is not None:
+        if self.FORCE_HEX_REPR:
+            return f'0x{int(self):X}'
+        elif self._name is not None:
             return f'{class_name}.{self._name}'
         else:
-            return f'{class_name}(0x{int(self):x})'
+            return f'{class_name}(0x{int(self):X})'
 
     def __str__(self):
         if self._name is not None:

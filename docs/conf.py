@@ -1,7 +1,12 @@
 import sphinx_rtd_theme
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('..'))
+
+# Fix enum doc: `SYSTEM_FOREGROUND = 0x0003` instead of `SYSTEM_FOREGROUND = HookEvent.SYSTEM_FOREGROUND`
+# See NamedInt.FORCE_HEX_STR
+os.environ['SPHINX_NAMED_INT_FORCE_HEX_REPR'] = 'ON'
 
 # Configuration file for the Sphinx documentation builder.
 #
