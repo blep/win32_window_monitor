@@ -39,6 +39,14 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # ensure that __all__ is not ignored
 autosummary_imported_members = True
 
+autodoc_default_options = {
+    'exclude-members': 'FORCE_HEX_REPR',  # Exclude NamedInt.FORCE_HEX_REPR
+    # TODO revist this, we want documented method to be in the doc
+    #    'special-members': '__init_subclass__, __eq__, __hash__',
+}
+
+autodoc_default_flags = ['members']
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
