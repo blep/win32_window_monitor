@@ -8,12 +8,12 @@ from ctypes import wintypes
 # them in the log output. Pick from
 # http://msdn.microsoft.com/en-us/library/windows/desktop/dd318066(v=vs.85).aspx
 EVENT_TYPES = {
-    HookEvent.SYSTEM_FOREGROUND: "Foreground",
-    HookEvent.OBJECT_FOCUS: "Focus",
-    HookEvent.OBJECT_SHOW: "Show",
-    HookEvent.SYSTEM_DIALOGSTART: "Dialog",
-    HookEvent.SYSTEM_CAPTURESTART: "Capture",
-    HookEvent.SYSTEM_MINIMIZEEND: "UnMinimize"
+    HookEvent.SYSTEM_FOREGROUND: "Foreground",  # The foreground window has changed.
+    HookEvent.OBJECT_FOCUS: "Focus",  # An object has received the keyboard focus.
+    HookEvent.OBJECT_SHOW: "Show",  # A hidden object is shown.
+    HookEvent.SYSTEM_DIALOGSTART: "Dialog",  # A dialog box has been displayed.
+    HookEvent.SYSTEM_CAPTURESTART: "Capture",  # A window has received mouse capture.
+    HookEvent.SYSTEM_MINIMIZEEND: "UnMinimize"  # A window object is about to be restored.
 }
 
 
