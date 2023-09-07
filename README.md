@@ -1,13 +1,9 @@
 # win32_window_monitor
 
-Monitor change of the focused window on Windows Operating System.
+Wraps WIN32 API [SetWinEventHook](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook) making it easy to monitor change of the focused window on Windows Operating 
+System. Provides helper function to easily retrieve process id and path of an event passed to the callback. 
 
-Reports the focused window HWND, pid and executable path to a python callback
-registered
-using [SetWinEventHook](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook).
-
-Provides helpers function to easily retrieve process id and path from the
-callback parameters.
+[SetWinEventHook](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook) reports global events containing the window HWND, pid and executable path to a python callback.
 
 # Example
 

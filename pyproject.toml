@@ -32,7 +32,7 @@ Source = "https://github.com/blep/win32_window_monitor"
 #Documentation = "https://?"
 
 [project.scripts]
-log_focused_window = "win32_window_monitor:main"
+log_focused_window = "win32_window_monitor.main:main"
 
 [project.optional-dependencies]
 test = [
@@ -45,17 +45,5 @@ doc = [
     "myst-parser ~= 2.0.0",
 ]
 
-#[tool.poetry.dev-dependencies]
-## Release
-#twine = "^4.0.2"
-#flit = "^3.9.0^"
-## keyring is used by flit to store the password
-#keyring = "^24.2.0"
-## Testing
-##pytest = "^7.3.2"
-##coverage = "^7.3.0"
-
 [tool.pytest.ini_options]
 testpaths = "tests"
-
-
