@@ -1,14 +1,29 @@
 # win32_window_monitor
 
-Wraps WIN32 API [SetWinEventHook](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook) making it easy to monitor change of the focused window on Windows Operating 
-System. Provides helper function to easily retrieve process id and path of an event passed to the callback. 
+Monitor global window [events](https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants)
+on Windows O.S. using the [SetWinEventHook](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook) 
+WIN32 SDK API:
 
-[SetWinEventHook](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook) reports global events containing the window HWND, pid and executable path to a python callback.
+- Reports the event's window HWND, PID (process identifier) and executable path to a python callback.
 
-# Example
+- Provides helper functions to easily retrieve the PID and executable path from
+  the callback parameters.
 
-The main.py shows how to use the API to produce the example output below. After
-installing the `win32-window-monitor` package, the script `log_focused_window` is installed.
+## Use cases
+
+- Tracks the focused window and its process
+- Tracks windows that capture the mouse or keyboard input
+- Tracks which process is causing your fullscreen game to lose focus (Kevin Turner's initial motivation for his gist)
+- ... (there are lots of UI Automation related events that could be useful)
+
+Since the standard HWND and PID are readily available, you can utilize
+existing Python modules to interact with either the window or the process.
+
+## log_focused_window script to log focus related events
+
+`main.py` shows how to use the API to produce the example output below. After
+installing the `win32-window-monitor` package, the script `log_focused_window` is installed (in 
+`venv\Scripts\log_focused_window.exe`, which is added to the `PATH` when activating the venv).
 
 ```bat
 pip install win32-window-monitor
@@ -33,27 +48,30 @@ which produces the following output:
 101314437:0.02  Focus           W:0x440820      P:16088         T:7192          System32\conhost.exe    C:\Windows\System32\cmd.exe - python  -m win32_window_monitor.main
 ```
 
-Columns content:
+Columns content
+----------------
 
-- event time_ms : elapsed second since last event
+- event time_ms : elapsed seconds since last event
 - event
 - W: HWND, the window handle
-- P: process id
-- T: thread id
+- P: process ID
+- T: thread ID
 - short process path
 - window title
 
-Actions made to produce this event:
+Actions made to produce those events
+------------------------------------
 
-- Bring Firefox window to focus by click on it in the Taskbar. Events with `explorer.exe` are interactions with the
-  Taskbar.
-- Bring Notion app to focus by click on it in the Taskbar.
-- Bring back cmd.exe to focus by click on it in the Taskbar.
+- Bring Firefox window to focus by clicking on it in the Taskbar. Events with
+`explorer.exe` are interactions with the Taskbar.
+- Bring Notion app to focus by clicking on it in the Taskbar.
+- Bring back cmd.exe to focus by clicking on it in the Taskbar.
 
-# Usage example
+
+## Usage example
 
 IMPORTANT: to track the current foreground window, you need at least HookEvent.SYSTEM_FOREGROUND and
-HookEvent.SYSTEM_MINIMIZEEND (SYSTEM_FOREGROUND for is not send when restoring a minimized window).
+HookEvent.SYSTEM_MINIMIZEEND (SYSTEM_FOREGROUND for is not sent when restoring a minimized window).
 
 ```python
 from win32_window_monitor import *
@@ -72,15 +90,15 @@ def on_event(win_event_hook_handle: HWINEVENTHOOK, event_id: int, hwnd: wintypes
     print(f'{event_time_ms} {event_id} P{process_id} {exe_path} {title}')
 
 def main():
-    # - init_com(): initialize Windows COM (CoInitialize)
-    # - post_quit_message_on_break_signal: signal handlers to exit the
-    # application when CTRL+C or CTRL+Break is pressed.
+    # - init_com(): Initialize Windows COM (CoInitialize)
+    # - post_quit_message_on_break_signal: Signal handlers to exit the
+    # application when CTRL+C or CTRL+Break are pressed.
     with init_com(), post_quit_message_on_break_signal():
-        # Converts the callback to the ctype function type, and register it.
+        # Converts the callback to the ctypes function type, and register it.
         win_event_proc = WinEventProcType(on_event)
         event_hook_handle = set_win_event_hook(win_event_proc, HookEvent.SYSTEM_FOREGROUND)
 
-        # Run Windows message loop until WM_QUIT message is received (send by signal handlers above).
+        # Run the Windows message loop until the WM_QUIT message is received (sent by signal handlers above).
         # If you have a graphic UI, it is likely that your application already has a Windows message
         # loop that should be used instead.
         run_message_loop()
@@ -91,7 +109,7 @@ if __name__ == '__main__':
     main()
 ```
 
-# Acknowledgment
+## Acknowledgments
 
 This project core is heavily based on the work of others:
 

@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 name = "win32-window-monitor"
 authors = [{name = "Baptiste Lepilleur", email = "baptiste.lepilleur@gmail.com"}]
 readme = "README.md"
-description = "Monitor/capture title and process of the focused desktop window using SetWinEventHook WIN32 API."
+description = "Monitor/capture title and process of window global events using SetWinEventHook WIN32 API, making it easy to track the current focused window."
 # See https://pypi.org/classifiers/ for all classifiers
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -29,6 +29,7 @@ dependencies = [
 [project.urls]
 Home = "https://github.com/blep/win32_window_monitor"
 Source = "https://github.com/blep/win32_window_monitor"
+Issues = "https://github.com/blep/win32_window_monitor/issues"
 #Documentation = "https://?"
 
 [project.scripts]

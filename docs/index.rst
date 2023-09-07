@@ -6,20 +6,35 @@
 win32-window-monitor
 ====================
 
-Monitor change of the focused window on Windows Operating System:
+Monitor global window `events <https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants>`_
+on Windows O.S. using the `SetWinEventHook <https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook>`_
+WIN32 SDK API:
 
-- Reports the focused window HWND, pid and executable path to a python callback
-  registered using `SetWinEventHook <https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook>`_.
+- Reports the event's window HWND and PID (process identifier) to a Python callback.
 
-- Provides helpers function to easily retrieve process id and path from the
-  callback parameters.
+- Provides helper functions to easily retrieve the PID and executable path
+  from the callback parameters.
 
-Example
-=======
+Use cases
+=========
 
-The main.py shows how to use the API to produce the example output below. After
-installing the ``win32-window-monitor`` package, the script ``log_focused_window``
-is installed.
+- Tracks the focused window and its process
+  - Interact with the window or its process using the event's HWND or PID
+- Tracks windows that capture the mouse or keyboard input
+- Tracks which process is causing your fullscreen game to lose focus (Kevin Turner's initial motivation for his gist)
+- ... (there are lots of UI Automation related events that could be useful)
+
+Since the standard HWND and PID are readily available, you can utilize
+existing Python modules to interact with either the window or the process.
+
+
+log_focused_window script
+=========================
+
+``main.py`` shows how to use the API to produce the example output below. After
+installing the ``win32-window-monitor`` package, the script ``log_focused_window`` is installed (in
+``venv\Scripts\log_focused_window.exe``, which is added to the ``PATH`` when activating the venv).
+
 
 .. code-block:: batch
 
@@ -46,7 +61,7 @@ which produces the following output:
 
 Columns content:
 
-- event time_ms : elapsed second since last event
+- event time_ms : elapsed seconds since last event
 - event
 - W: HWND, the window handle
 - P: process id
@@ -54,17 +69,22 @@ Columns content:
 - short process path
 - window title
 
-Actions made to produce this event:
-- Bring Firefox window to focus by click on it in the Taskbar. Events with `explorer.exe` are interactions with the Taskbar.
-- Bring Notion app to focus by click on it in the Taskbar.
-- Bring back cmd.exe to focus by click on it in the Taskbar.
+Actions made to produce those events:
+
+- Bring Firefox window to focus by clicking on it in the Taskbar. Events with
+  ``explorer.exe`` are interactions with the Taskbar.
+- Bring Notion app to focus by clicking on it in the Taskbar.
+- Bring back cmd.exe to focus by clicking on it in the Taskbar.
+
 
 Usage example
 =============
 
-IMPORTANT: you need more than just SYSTEM_FOREGROUND to capture all
-events that bring a window to the foreground. SYSTEM_FOREGROUND for
-example is not generated when restoring a minimized window.
+.. note::
+   To track the current foreground window, you need at least :class:`win32_window_monitor.HookEvent.SYSTEM_FOREGROUND`
+   and :class:`win32_window_monitor.HookEvent.SYSTEM_MINIMIZEEND`. (:class:`win32_window_monitor.HookEvent.SYSTEM_FOREGROUND`
+   is not sent when restoring a minimized window).
+
 
 .. literalinclude:: ../win32_window_monitor/main_usage_example.py
 
