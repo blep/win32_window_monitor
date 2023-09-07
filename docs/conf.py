@@ -1,3 +1,4 @@
+from sphinx.application import Sphinx
 import sphinx_rtd_theme
 import os
 import sys
@@ -46,6 +47,41 @@ autodoc_default_options = {
 }
 
 autodoc_default_flags = ['members']
+
+def custom_autodoc_skip_filter(app: Sphinx, what: str, name: str, obj: object,
+                               skip: bool, options: dict) -> bool:
+    """
+    Keeps default 'include' behavior the same, but also includes class members and attributes
+    that have a specific docstring.
+
+    Args:
+        app: The Sphinx application.
+        what: The type of object being documented.
+        name: The name of the object.
+        obj: The object being documented.
+        skip: The current skip status.
+        options: Additional options.
+
+    Returns:
+        bool: True to skip the member, False to include it in the documentation.
+    """
+    app.info(f"Skip={skip} for '{name}' based on custom filter.")
+    if not skip:
+        return False
+
+    if what in ('method', 'attribute', 'property', 'descriptor', 'classmethod', 'staticmethod'):
+        if hasattr(obj, '__doc__'):
+            return False
+            # parent_classes = obj.__objclass__.__bases__
+            # if not any(getattr(parent, '__doc__', None) == obj.__doc__ for parent in parent_classes):
+            #     return False
+
+    return skip
+
+
+def setup(app):
+    app.connect('autodoc-skip-member', custom_autodoc_skip_filter)
+
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
