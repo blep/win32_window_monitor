@@ -74,10 +74,9 @@ Actions made to produce those events:
 Usage example
 =============
 
-.. note::
-   To track the current foreground window, you need at least ``HookEvent.SYSTEM_FOREGROUND``
-   and ``HookEvent.SYSTEM_MINIMIZEEND`` (``HookEvent.SYSTEM_FOREGROUND`` is not sent when
-   restoring a minimized window).
+**IMPORTANT**: To track the current foreground window, you need at least ``HookEvent.SYSTEM_FOREGROUND``
+and ``HookEvent.SYSTEM_MINIMIZEEND`` (``HookEvent.SYSTEM_FOREGROUND`` is not sent when
+restoring a minimized window).
 
 
 .. code-block:: python
