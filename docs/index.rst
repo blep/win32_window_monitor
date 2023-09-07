@@ -3,90 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-win32-window-monitor
-====================
+.. include:: ../README.rst
 
-Monitor global window `events <https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants>`_
-on Windows O.S. using the `SetWinEventHook <https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook>`_
-WIN32 SDK API:
-
-- Reports the event's window HWND and PID (process identifier) to a Python callback.
-
-- Provides helper functions to easily retrieve the PID and executable path
-  from the callback parameters.
-
-Use cases
-=========
-
-- Tracks the focused window and its process
-  - Interact with the window or its process using the event's HWND or PID
-- Tracks windows that capture the mouse or keyboard input
-- Tracks which process is causing your fullscreen game to lose focus (Kevin Turner's initial motivation for his gist)
-- ... (there are lots of UI Automation related events that could be useful)
-
-Since the standard HWND and PID are readily available, you can utilize
-existing Python modules to interact with either the window or the process.
-
-
-log_focused_window script
-=========================
-
-``main.py`` shows how to use the API to produce the example output below. After
-installing the ``win32-window-monitor`` package, the script ``log_focused_window`` is installed (in
-``venv\Scripts\log_focused_window.exe``, which is added to the ``PATH`` when activating the venv).
-
-
-.. code-block:: batch
-
-   pip install win32-window-monitor
-   log_focused_window
-
-which produces the following output:
-
-.. code-block:: text
-
-   101307546:0.00  Capture         W:0x1014c       P:7440          T:7592          Windows\explorer.exe    Running applications
-   101307687:0.14  Foreground      W:0x903ce       P:2508          T:1988          net\firefox.exe blep/win32_window_monitor: Monitor change of the focused window on Windows O.S.. Reports the focused window HWND, pid and executable to a Python callback. — Mozilla Firefox
-   101307687:0.00  Focus           W:0x903ce       P:2508          T:1988          net\firefox.exe blep/win32_window_monitor: Monitor change of the focused window on Windows O.S.. Reports the focused window HWND, pid and executable to a Python callback. — Mozilla Firefox
-   101312015:4.33  Show            W:0xc080c       P:7440          T:7592          Windows\explorer.exe
-   101312015:0.00  Show            W:0x10150       P:7440          T:7592          Windows\explorer.exe
-   101312031:0.02  Show            W:0x1065e       P:12428         T:11660         Notion\Notion.exe       Chrome Legacy Window
-   101312312:0.28  Capture         W:0x1014c       P:7440          T:7592          Windows\explorer.exe    Running applications
-   101312468:0.16  Foreground      W:0x20642       P:12428         T:11660         Notion\Notion.exe       Python: automated CI/Release/doc/Wheel
-   101312484:0.02  Focus           W:0x20642       P:12428         T:11660         Notion\Notion.exe       Python: automated CI/Release/doc/Wheel
-   101312484:0.00  Show            W:0x20642       P:12428         T:11660         Notion\Notion.exe       Python: automated CI/Release/doc/Wheel
-   101314312:1.83  Capture         W:0x1014c       P:7440          T:7592          Windows\explorer.exe    Running applications
-   101314421:0.11  Foreground      W:0x440820      P:16088         T:7192          System32\conhost.exe    C:\Windows\System32\cmd.exe - python  -m win32_window_monitor.main
-   101314437:0.02  Focus           W:0x440820      P:16088         T:7192          System32\conhost.exe    C:\Windows\System32\cmd.exe - python  -m win32_window_monitor.main
-
-Columns content:
-
-- event time_ms : elapsed seconds since last event
-- event
-- W: HWND, the window handle
-- P: process id
-- T: thread id
-- short process path
-- window title
-
-Actions made to produce those events:
-
-- Bring Firefox window to focus by clicking on it in the Taskbar. Events with
-  ``explorer.exe`` are interactions with the Taskbar.
-- Bring Notion app to focus by clicking on it in the Taskbar.
-- Bring back cmd.exe to focus by clicking on it in the Taskbar.
-
-
-Usage example
-=============
-
-.. note::
-   To track the current foreground window, you need at least :class:`win32_window_monitor.HookEvent.SYSTEM_FOREGROUND`
-   and :class:`win32_window_monitor.HookEvent.SYSTEM_MINIMIZEEND`. (:class:`win32_window_monitor.HookEvent.SYSTEM_FOREGROUND`
-   is not sent when restoring a minimized window).
-
-
-.. literalinclude:: ../win32_window_monitor/main_usage_example.py
 
 
 
@@ -95,8 +13,6 @@ Usage example
    :caption: Contents:
 
    api
-
-.. include ../README.md
 
 
 Indices and tables

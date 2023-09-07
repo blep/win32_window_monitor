@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "win32-window-monitor"
 authors = [{name = "Baptiste Lepilleur", email = "baptiste.lepilleur@gmail.com"}]
-readme = "README.md"
+readme = "README.rst"
 description = "Monitor/capture title and process of window global events using SetWinEventHook WIN32 API, making it easy to track the current focused window."
 # See https://pypi.org/classifiers/ for all classifiers
 classifiers = [
