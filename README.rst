@@ -75,9 +75,9 @@ Usage example
 =============
 
 .. note::
-   To track the current foreground window, you need at least :class:`win32_window_monitor.HookEvent.SYSTEM_FOREGROUND`
-   and :class:`win32_window_monitor.HookEvent.SYSTEM_MINIMIZEEND`. (:class:`win32_window_monitor.HookEvent.SYSTEM_FOREGROUND`
-   is not sent when restoring a minimized window).
+   To track the current foreground window, you need at least ``HookEvent.SYSTEM_FOREGROUND``
+   and ``HookEvent.SYSTEM_MINIMIZEEND``. (``HookEvent.SYSTEM_FOREGROUND`` is not sent when
+   restoring a minimized window).
 
 
 .. code-block:: python
