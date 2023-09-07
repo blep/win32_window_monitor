@@ -25,7 +25,7 @@ existing Python modules to interact with either the window or the process.
 log_focused_window script
 =========================
 
-``main.py`` shows how to use the API to produce the example output below. After
+``win32_window_monitor/main.py`` shows how to use the API to produce the example output below. After
 installing the ``win32-window-monitor`` package, the script ``log_focused_window`` is installed (in
 ``venv\Scripts\log_focused_window.exe``, which is added to the ``PATH`` when activating the venv).
 
@@ -76,11 +76,12 @@ Usage example
 
 .. note::
    To track the current foreground window, you need at least ``HookEvent.SYSTEM_FOREGROUND``
-   and ``HookEvent.SYSTEM_MINIMIZEEND``. (``HookEvent.SYSTEM_FOREGROUND`` is not sent when
+   and ``HookEvent.SYSTEM_MINIMIZEEND`` (``HookEvent.SYSTEM_FOREGROUND`` is not sent when
    restoring a minimized window).
 
 
 .. code-block:: python
+
     # win32_window_monitor/main_usage_example.py
     from win32_window_monitor import *
     from ctypes import wintypes
