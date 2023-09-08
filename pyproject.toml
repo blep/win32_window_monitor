@@ -30,7 +30,7 @@ dependencies = [
 Home = "https://github.com/blep/win32_window_monitor"
 Source = "https://github.com/blep/win32_window_monitor"
 Issues = "https://github.com/blep/win32_window_monitor/issues"
-#Documentation = "https://?"
+Documentation = "http://win32-window-monitor.readthedocs.io/"
 
 [project.scripts]
 log_focused_window = "win32_window_monitor.main:main"
