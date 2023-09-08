@@ -32,4 +32,4 @@ python:
      # when the pinned library is also a dependency of this package.
      - method: pip
        path: .
-     - requirements: doc/requirements.txt
+     - requirements: docs/requirements.txt
