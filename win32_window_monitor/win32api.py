@@ -159,7 +159,7 @@ class EventHookHandle:
 def set_win_event_hook(on_event_func: EventHookFuncType, event_type: Union[int, HookEvent]) -> EventHookHandle:
     """Set a global event hook for the given event_type.
 
-    Throws an OSError exception on failure created by ctypes.WinError().
+    Throws an OSError exception created by ctypes.WinError() on failure.
 
     See https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook for detail.
 
