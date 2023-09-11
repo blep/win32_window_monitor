@@ -3,8 +3,8 @@ import ctypes
 import logging
 import signal
 from ctypes import wintypes
-from typing import Optional
-from typing import Union
+from typing import Optional, Union, Callable
+import threading
 
 from .ids import HookEvent
 
@@ -22,6 +22,14 @@ WinEventProcType = ctypes.WINFUNCTYPE(
     wintypes.DWORD,
     wintypes.DWORD
 )
+
+EventHookFuncType = Callable[[wintypes.HANDLE,
+                              wintypes.DWORD,
+                              wintypes.HWND,
+                              wintypes.LONG,
+                              wintypes.LONG,
+                              wintypes.DWORD,
+                              wintypes.DWORD], None]
 
 HWINEVENTHOOK = wintypes.HANDLE
 
@@ -121,22 +129,60 @@ SetWinEventHook.argtypes = [
 SetWinEventHook.restype = HWINEVENTHOOK
 
 
-def set_win_event_hook(win_event_proc: WinEventProcType, event_type: Union[int, HookEvent]) -> HWINEVENTHOOK:
+class EventHookHandle:
+    """Event hook handle used to stop listening for the event, **must remain alive while listening for events**.
+    """
+
+    def __init__(self, handle: HWINEVENTHOOK, proc: WinEventProcType):
+        self.handle = handle
+        self.proc = proc
+        self.lock = threading.Lock()
+
+    def __del__(self):
+        """Stops listening for events registered for this handle if not already done.
+        """
+        self.unhook()
+
+    def unhook(self):
+        """Stops listening for events registered for this handle.
+        """
+        with self.lock:
+            handle = self.handle
+            if not handle:
+                return  # already unhook
+        unhook_win_event(handle)
+        with self.lock:
+            self.handle = None
+            self.proc = None
+
+
+def set_win_event_hook(on_event_func: EventHookFuncType, event_type: Union[int, HookEvent]) -> EventHookHandle:
     """Set a global event hook for the given event_type.
 
     Throws an OSError exception on failure created by ctypes.WinError().
 
     See https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwineventhook for detail.
 
-    :param win_event_proc: callback called when an event occurs.
+    **IMPORTANT**:  the returned handle must remain alive while listening for
+    events. ctypes dynamically generates a function which is registered to
+    Windows and redirect to Python code. The life-time of this function is
+    tied to the EventHookHandle. Failure to do that may cause a crash.
+
+    Uses the returned handle unhook() method to stop listening for the registered event.
+
+    :param on_event_func: callback called when an event occurs.
     :param event_type: event id to hook. See https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants
-    :return: registered event hook handle.
+    :return: registered event hook handle, must remain alive while listening for events (see function description).
     """
+    if not callable(on_event_func):
+        raise ValueError("win_event_proc must be a callable compatible with EventHook.")
+    win_event_proc = WinEventProcType(on_event_func)
     win_event_hook_handle = SetWinEventHook(
         event_type, int(event_type), 0, win_event_proc, 0, 0, WINEVENT_OUTOFCONTEXT)
     if not win_event_hook_handle:
         raise ctypes.WinError()
-    return win_event_hook_handle
+    handle = EventHookHandle(win_event_hook_handle, win_event_proc)
+    return handle
 
 
 UnhookWinEvent = user32.UnhookWinEvent
@@ -186,6 +232,7 @@ def post_quit_message_on_break_signal():
 
     This is a contextmanager for use with the with statement.
     """
+
     def signal_handler_post_quit_message(signum, stack_frame):
         post_quit_message()
 
