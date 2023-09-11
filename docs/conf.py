@@ -1,8 +1,8 @@
 import sphinx_rtd_theme
 import os
 import sys
-import sys
 from unittest.mock import MagicMock
+import ctypes
 
 sys.path.insert(0, os.path.abspath('..'))
 
@@ -12,13 +12,13 @@ os.environ['SPHINX_NAMED_INT_FORCE_HEX_REPR'] = 'ON'
 
 
 # Read The Docs only has linux machine for build, so we need to mock ctypes.windll as it is not available on linux
-class MockCTypesWinDll(MagicMock):
+class MockCTypes(MagicMock):
     @staticmethod
     def __getattr__(name):
         return MagicMock()
 
 
-sys.modules['ctypes.windll'] = MockCTypesWinDll()
+sys.modules['ctypes'] = MockCTypes()
 
 # Configuration file for the Sphinx documentation builder.
 #
