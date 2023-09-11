@@ -1,8 +1,7 @@
 import sphinx_rtd_theme
 import os
 import sys
-from unittest.mock import MagicMock
-import ctypes
+import typing
 
 sys.path.insert(0, os.path.abspath('..'))
 
@@ -11,14 +10,33 @@ sys.path.insert(0, os.path.abspath('..'))
 os.environ['SPHINX_NAMED_INT_FORCE_HEX_REPR'] = 'ON'
 
 
-# Read The Docs only has linux machine for build, so we need to mock ctypes.windll as it is not available on linux
-class MockCTypes(MagicMock):
-    @staticmethod
-    def __getattr__(name):
-        return MagicMock()
+# Mock types to enable doc generation on Linux and provide type name that the developer use.
+class MockWithDocName(typing.NewType):
+    """Mock ctypes package as readthedocs.org only provides Linux machine for build, and ctypes.windll is not available.
+
+    This also fix ctypes.wintypes.HANDLE being documented as ctypes.c_void_p, and similar for DWORD...
+    """
+
+    def __getattr__(self, name):
+        if name not in self.__dict__:
+            value = MockWithDocName(self.__name__ + '.' + name, typing.Any)
+            setattr(self, name, value)
+            return value
+        return super().__getattribute__(name)
+
+    def __repr__(self):
+        return self.__name__
 
 
-sys.modules['ctypes'] = MockCTypes()
+def win_func_type(restype, *argtypes):
+    return typing.Callable[argtypes, restype]
+
+
+import ctypes
+
+ctypes.wintypes = MockWithDocName('wintypes', typing.Any)
+ctypes.windll = MockWithDocName('windll', typing.Any)
+ctypes.WINFUNCTYPE = win_func_type
 
 # Configuration file for the Sphinx documentation builder.
 #
