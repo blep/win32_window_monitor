@@ -97,7 +97,7 @@ class NamedInt(int):
 class HookEvent(NamedInt):
     """
     Event constants for set_event_hook() and its callback.
-    Names are identical to Windows SDK, with EVENT_ prefix stripped.
+    Names are identical to Windows SDK, with EVENT\_ prefix stripped.
 
     See https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants for a detailed
     and accurate description of each event.
@@ -321,7 +321,7 @@ class HookEvent(NamedInt):
 
 class ObjectId(NamedInt):
     """Object ids constants for set_event_hook() callback id_object parameter.
-    Names are identical to Windows SDK, with OBJID_ prefix stripped.
+    Names are identical to Windows SDK, with OBJID\_ prefix stripped.
 
     See https://learn.microsoft.com/en-us/windows/win32/winauto/object-identifiers for a detailed
     and accurate description of each events.
