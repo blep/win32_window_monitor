@@ -1,8 +1,7 @@
 import sphinx_rtd_theme
 import os
 import sys
-from unittest.mock import MagicMock
-import ctypes
+import typing
 
 sys.path.insert(0, os.path.abspath('..'))
 
@@ -12,13 +11,28 @@ os.environ['SPHINX_NAMED_INT_FORCE_HEX_REPR'] = 'ON'
 
 
 # Read The Docs only has linux machine for build, so we need to mock ctypes.windll as it is not available on linux
-class MockCTypes(MagicMock):
-    @staticmethod
-    def __getattr__(name):
-        return MagicMock()
+# Also, ctypes alias wintypes.HANDLE to c_void_p, but we want the doc to retain 'wintypes.HANDLE".
+class MockWithDocName(typing.NewType):
+    def __getattr__(self, name):
+        if name not in self.__dict__:
+            value = MockWithDocName(self.name + '.' + name, typing.Any)
+            setattr(self, name, value)
+            return value
+        return super().__getattribute__(name)
+
+    def __repr__(self):
+        return 'ctypes.wintypes.%s' % self.name
+
+def win_func_type(restype, *argtypes):
+    return typing.Callable[argtypes, restype]
+    
+
+import ctypes
+ctypes.wintypes = MockWithDocName('wintypes', typing.Any)
+ctypes.windll = MockWithDocName('windll', typing.Any)
+ctypes.WINFUNCTYPE = win_func_type
 
 
-sys.modules['ctypes'] = MockCTypes()
 
 # Configuration file for the Sphinx documentation builder.
 #
