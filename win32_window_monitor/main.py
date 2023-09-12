@@ -60,8 +60,7 @@ def main():
         # Demonstrates that we can use a method as event hook callback without issue thanks
         # to ctypes.
         event_logger = WindowEventLogger()
-        win_event_proc = WinEventProcType(event_logger.on_event)
-        event_hook_handles = [set_win_event_hook(win_event_proc, et) for et in EVENT_TYPES.keys()]
+        event_hook_handles = [set_win_event_hook(event_logger.on_event, et) for et in EVENT_TYPES.keys()]
 
         # Run Windows message loop until WM_QUIT message is received (send by signal handlers above).
         # If you have a graphic UI, it is likely that your application already has a Windows message
@@ -69,7 +68,7 @@ def main():
         run_message_loop()
 
         for hook_handle in event_hook_handles:
-            unhook_win_event(hook_handle)
+            hook_handle.unhook()
 
 
 if __name__ == '__main__':
