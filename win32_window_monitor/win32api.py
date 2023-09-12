@@ -150,7 +150,7 @@ class EventHookHandle:
             handle = self.handle
             if not handle:
                 return  # already unhook
-        unhook_win_event(handle)
+        _unhook_win_event(handle)
         with self.lock:
             self.handle = None
             self.proc = None
@@ -190,7 +190,7 @@ UnhookWinEvent.argtypes = [HWINEVENTHOOK]
 UnhookWinEvent.restype = wintypes.BOOL
 
 
-def unhook_win_event(win_event_hook_handle: HWINEVENTHOOK) -> bool:
+def _unhook_win_event(win_event_hook_handle: HWINEVENTHOOK) -> bool:
     """Removes the hook set by set_win_event_hook()."""
     return UnhookWinEvent(win_event_hook_handle) != 0
 
