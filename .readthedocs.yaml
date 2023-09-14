@@ -1,0 +1,35 @@
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+version: 2
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.11"
+    # You can also specify other tool versions:
+    # nodejs: "19"
+    # rust: "1.64"
+    # golang: "1.19"
+  apt_packages:
+    - inkscape
+
+# Build documentation in the "docs/" directory with Sphinx
+sphinx:
+   configuration: docs/conf.py
+
+formats:
+#  - epub
+#  - pdf
+  - htmlzip
+
+# Optional but recommended, declare the Python requirements required
+# to build your documentation
+# See https://docs.readthedocs.io/en/stable/guides/reproducible-builds.html
+python:
+   install:
+     # Install this package first, then doc/en/requirements.txt.
+     # This order is important to honor any pins in doc/en/requirements.txt
+     # when the pinned library is also a dependency of this package.
+     - method: pip
+       path: .
+     - requirements: docs/requirements.txt

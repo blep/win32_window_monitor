@@ -15,7 +15,7 @@ Use cases
 
 - Tracks the focused window and its process
 - Tracks windows that capture the mouse or keyboard input
-- Tracks which process is causing your fullscreen game to lose focus (Kevin Turner's initial motivation for his gist)
+- Tracks which process is causing your fullscreen game to lose focus (Kevin Turner's initial motivation for the gist)
 - ... (there are lots of UI Automation related events that could be useful)
 
 Since the standard HWND and PID are readily available, you can utilize
