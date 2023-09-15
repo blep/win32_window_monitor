@@ -1,0 +1,45 @@
+# Use trusted publisher auth on PyPI: https://docs.pypi.org/trusted-publishers/adding-a-publisher/
+# or requires secrets.PYPI_API_TOKEN, create from your PyPi account settings.
+# - The first publish must be done manually to create the project on PyPI (or uses an unscoped tokenà
+# - For following publish, you can delete the unscoped token, and:
+#   1. setup trusted publisher auth on PyPI for that project
+#   2. or create a scoped token with:
+#   - Permissions: Update Package
+#   - Scope: Project: <your PyPI project name>
+name: Publish package to PyPI.org
+on:
+  # This workflow is triggered when a release is made.
+  # See https://github.com/actions/starter-workflows/blob/main/ci/python-publish.yml
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  pypi:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # The fetch-depth: 0 causes the checkout action to fetch all branches and tags instead of only fetching the
+          # ref/SHA that triggered the workflow. Otherwise, it would fail to find the version number from the git
+          # tags.
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install flit
+          flit install --extras=all
+      - name: Publish package
+        # See https://github.com/pypa/gh-action-pypi-publish
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # No password, use trusted publisher auth: https://docs.pypi.org/trusted-publishers/adding-a-publisher/
+          # (requires the project to exist on PyPI, so one manual publish to initialize the project)
+          # password: ${{ secrets.PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
