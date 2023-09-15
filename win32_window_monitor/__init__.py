@@ -1,4 +1,4 @@
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 from win32_window_monitor.ids import HookEvent, ObjectId, NamedInt
 from win32_window_monitor.win32api import (

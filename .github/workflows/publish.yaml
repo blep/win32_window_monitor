@@ -2,7 +2,7 @@
 # or requires secrets.PYPI_API_TOKEN, create from your PyPi account settings.
 # - The first publish must be done manually to create the project on PyPI (or uses an unscoped tokenà
 # - For following publish, you can delete the unscoped token, and:
-#   1. setup trusted publisher auth on PyPI for that project
+#   1. setup trusted publisher auth on PyPI for that project (see Publishing on your PyPI project's sidebar)
 #   2. or create a scoped token with:
 #   - Permissions: Update Package
 #   - Scope: Project: <your PyPI project name>
