@@ -61,6 +61,9 @@ jobs:
       - name: run pytest
         timeout-minutes: 5
         run: pytest .
+      - name: Build binary wheel and source tarball
+        run: |
+          flit build
       - name: Store the distribution packages
         # See https://github.com/actions/upload-artifact
         uses: actions/upload-artifact@v3
