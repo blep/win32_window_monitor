@@ -1,11 +1,24 @@
 # Use trusted publisher auth on PyPI: https://docs.pypi.org/trusted-publishers/adding-a-publisher/
 # or requires secrets.PYPI_API_TOKEN, create from your PyPi account settings.
-# - The first publish must be done manually to create the project on PyPI (or uses an unscoped tokenà
-# - For following publish, you can delete the unscoped token, and:
-#   1. setup trusted publisher auth on PyPI for that project (see Publishing on your PyPI project's sidebar)
-#   2. or create a scoped token with:
+#
+# Creating pypi environment:
+# - GitHub project settings > Environment > new > "pypi", and save it.
+#
+# Configuring trusted publisher:
+# - Adds the new publisher to https://pypi.org/manage/account/publishing/
+#
+# Alternatively, uses PyPI API token (in your PyPI account settings):
+# 1. Do a first publish either manually or using an unscoped token
+# 2. Create a scoped token with:
+
 #   - Permissions: Update Package
 #   - Scope: Project: <your PyPI project name>
+# 3. Adds the token in the GitHub's pypi environemnt secret:
+#
+# Workflow notes:
+# - Each job executed by the matrix upload its dist/ to the artifact store.
+# - All those dist/ are downloaded from the artifact store by the final publish to PyPI steps.
+# See https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 name: Publish package to PyPI.org
 on:
   # This workflow is triggered when a release is made.
@@ -17,29 +30,69 @@ permissions:
   contents: read
 
 jobs:
-  pypi:
-    runs-on: windows-latest
+  build-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          # See https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-software
+          - windows-latest
+        python-version:
+          - '3.9'
+#          - '3.10'
+#          - '3.11'
+        continue-on-error:
+          - false
+    runs-on: "${{ matrix.os }}"
+    continue-on-error: "${{ matrix.continue-on-error }}"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          # The fetch-depth: 0 causes the checkout action to fetch all branches and tags instead of only fetching the
-          # ref/SHA that triggered the workflow. Otherwise, it would fail to find the version number from the git
-          # tags.
-          fetch-depth: 0
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "This job is now running on a ${{ runner.os }} server."
+      - run: echo "The branch name is ${{ github.ref }} and the repository is ${{ github.repository }}."
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "${{ matrix.python-version }}"
       - name: install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install flit
           flit install --extras=all
-      - name: Publish package
-        # See https://github.com/pypa/gh-action-pypi-publish
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: run pytest
+        timeout-minutes: 5
+        run: pytest .
+      - name: Store the distribution packages
+        # See https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v3
         with:
-          # No password, use trusted publisher auth: https://docs.pypi.org/trusted-publishers/adding-a-publisher/
-          # (requires the project to exist on PyPI, so one manual publish to initialize the project)
-          # password: ${{ secrets.PYPI_API_TOKEN }}
-          repository-url: https://test.pypi.org/legacy/
+          name: python-package-distributions
+          path: dist/
+
+  publish-to-pypi:
+    name: >-
+      Publish Python distribution to PyPI
+    needs:
+    - build-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+#      url: https://pypi.org/p/win32_window_monitor
+      url: https://test.pypi.org/p/win32_window_monitor
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+    - name: Download all the dists
+      # dist/ for each O.S. have been uploaded in build-and-test using actions/upload-artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to PyPI
+      # See https://github.com/pypa/gh-action-pypi-publish
+      # No password, use trusted publisher auth: https://docs.pypi.org/trusted-publishers/adding-a-publisher/
+      # (requires the project to exist on PyPI, so one manual publish to initialize the project)
+      # password: ${{ secrets.PYPI_API_TOKEN }}
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
