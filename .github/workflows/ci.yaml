@@ -17,6 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
+          # See https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-software
           - windows-latest
         python-version:
           - '3.9'
