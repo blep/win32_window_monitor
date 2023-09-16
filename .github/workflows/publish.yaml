@@ -10,6 +10,7 @@
 # Alternatively, uses PyPI API token (in your PyPI account settings):
 # 1. Do a first publish either manually or using an unscoped token
 # 2. Create a scoped token with:
+
 #   - Permissions: Update Package
 #   - Scope: Project: <your PyPI project name>
 # 3. Adds the token in the GitHub's pypi environemnt secret:
