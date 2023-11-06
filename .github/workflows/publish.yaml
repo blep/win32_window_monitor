@@ -79,8 +79,8 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-#      url: https://pypi.org/p/win32_window_monitor
-      url: https://test.pypi.org/p/win32_window_monitor
+      url: https://pypi.org/p/win32_window_monitor
+#      url: https://test.pypi.org/p/win32_window_monitor
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
 
@@ -97,5 +97,6 @@ jobs:
       # (requires the project to exist on PyPI, so one manual publish to initialize the project)
       # password: ${{ secrets.PYPI_API_TOKEN }}
       uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        repository-url: https://test.pypi.org/legacy/
+# Uncomment this to release on PyPI test server
+#      with:
+#        repository-url: https://test.pypi.org/legacy/
